@@ -1,0 +1,36 @@
+.score-input {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 220px;
+}
+
+.score-input__field {
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 6px;
+  border: 1px solid #475569;
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.score-input__field:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.score-input__button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #38bdf8;
+  color: #020617;
+}
+
+.score-input__button:disabled {
+  background: #475569;
+  cursor: not-allowed;
+}
