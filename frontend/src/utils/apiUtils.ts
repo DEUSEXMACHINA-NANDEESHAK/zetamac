@@ -23,7 +23,7 @@ export async function saveScore(
     const errorData = await response.json();
     throw new Error(errorData.detail || "Failed to save score");
   }
-
+  console.log("Score saved successfully");
   return response.json();
 }
 
