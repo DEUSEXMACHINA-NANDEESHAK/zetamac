@@ -3,6 +3,8 @@ import "./App.css";
 import ScoreInput from "./components/ScoreInput/ScoreInput";
 import MagicPhraseModal from "./components/MagicPhraseModal/MagicPhraseModal";
 import SuccessPopup from "./components/SuccessPopup/SuccessPopup";
+import ScoreGraph from "./components/ScoreGraph/ScoreGraph";
+import type { Score } from "./utils/apiUtils";
 
 type View = "upload" | "graph";
 
@@ -15,10 +17,14 @@ function App() {
   // success popup visibility
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const [graphDirty, setGraphDirty] = useState(false);
+  const [graphLoaded, setGraphLoaded] = useState(false);
+  const [graphData, setGraphData] = useState<Score[]>([]);
+
   return (
     <div className="app">
-      <h1>Nandeeshak</h1>
-      <p>Breath-hold tracker</p>
+      <h1>ZETAMAC</h1>
+      <p>This is a game. ONLY for those who know me very well :)</p>
 
       {/* Tabs */}
       <div className="tabs">
@@ -53,11 +59,20 @@ function App() {
 
       {/* Graph Panel */}
       {view === "graph" && (
-        <section className="panel">
-          <h2 className="panel__title">Graph</h2>
-          <p>Graph will appear here</p>
-        </section>
-      )}
+  <section className="panel">
+
+    <ScoreGraph
+      graphDirty={graphDirty}
+      graphLoaded={graphLoaded}
+      setGraphLoaded={setGraphLoaded}
+      graphData={graphData}
+      setGraphData={setGraphData}
+      onGraphReloaded={() => setGraphDirty(false)}
+    />
+  </section>
+)}
+
+
 
       {/* Magic Phrase Modal */}
       {pendingScore !== null && (
@@ -71,6 +86,7 @@ function App() {
             // ONLY when magic phrase is correct
             setPendingScore(null);
             setShowSuccess(true);
+            setGraphDirty(true); // 👈 soft refresh trigger
           }}
         />
       )}

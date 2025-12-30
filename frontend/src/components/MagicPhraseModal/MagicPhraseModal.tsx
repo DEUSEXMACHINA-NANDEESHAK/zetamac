@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./MagicPhraseModal.css";
+import { saveScore } from "../../utils/apiUtils";
 
 type MagicPhraseModalProps = {
   score: number;
@@ -15,29 +16,42 @@ export default function MagicPhraseModal({
   const [phrase, setPhrase] = useState("");
   const [checked, setChecked] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const canSubmit = phrase.trim().length > 0 && checked;
+  const canSubmit = phrase.trim().length > 0 && checked && !loading;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!checked) {
       setError("Please confirm before submitting.");
       return;
     }
 
-    if (!phrase.trim()) {
-      setError("Magic phrase cannot be empty.");
-      return;
-    }
+    try {
+      setLoading(true);
+      setError("");
 
-    setError("");
-    onClose();
-    onSuccess();
+      // ✅ pass the correct variable
+      await saveScore(score, phrase);
+
+      onClose();   // close magic modal
+      onSuccess(); // show "saved successfully" popup
+    } catch (err: any) {
+      setError(err.message || "Invalid magic phrase");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="modal-backdrop">
       <div className="modal-card">
-        <button className="modal-close" onClick={onClose}>
+        {loading && (
+          <div className="modal-loader-overlay">
+            <div className="modal-loader" />
+          </div>
+        )}
+
+        <button className="modal-close" onClick={onClose} disabled={loading}>
           ✕
         </button>
 
@@ -71,21 +85,21 @@ export default function MagicPhraseModal({
               type="checkbox"
               checked={checked}
               onChange={(e) => setChecked(e.target.checked)}
+              disabled={loading}
             />
           </label>
         </div>
 
         {/* INPUT */}
-        <label className="modal-label">Enter the MAGIC PHRASE</label>
-
         <input
           className={`modal-input ${error ? "modal-input--error" : ""}`}
-          placeholder="YYYY-MM-DDWolfieIsHere@!%)#@))!"
+          placeholder="Enter the Magic Phrase...."
           value={phrase}
           onChange={(e) => {
             setPhrase(e.target.value);
             setError("");
           }}
+          disabled={loading}
         />
 
         {error && <div className="modal-error">{error}</div>}
@@ -97,11 +111,12 @@ export default function MagicPhraseModal({
             disabled={!canSubmit}
             onClick={handleSubmit}
           >
-            Submit
+            {loading ? "Saving..." : "Submit"}
           </button>
 
           <button
             className="modal-forgot"
+            disabled={loading}
             onClick={() => {
               setPhrase("");
               setError("");
