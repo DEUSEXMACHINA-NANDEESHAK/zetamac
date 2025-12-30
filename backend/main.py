@@ -9,10 +9,10 @@ app = FastAPI(title="Zetamac API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
+    allow_origins=["*"
         # "http://localhost:5173",          # local dev
-        "https://nandeeshak.com",          # prod
-        "https://www.nandeeshak.com",      # prod
+        # "https://nandeeshak.com",          # prod
+        # "https://www.nandeeshak.com",      # prod
     ],
     allow_credentials=True,
     allow_methods=["*"],
